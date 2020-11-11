@@ -28,7 +28,8 @@ const parser = comp => {
   if (vShow !== undefined && !vShow)
     props.style = { ...props.style, display: "none" };
   if (children) children = parser(children);
-  else if (vText !== undefined && vText !== false) children = vText;
+  else if (vText !== undefined && vText !== false && children !== undefined)
+    children = vText;
 
   return <comp.type {...props}>{children}</comp.type>;
 };

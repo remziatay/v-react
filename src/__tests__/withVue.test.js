@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import withVue from "../withVue";
 
 describe("withVue rules", () => {
@@ -45,6 +45,25 @@ describe("withVue rules", () => {
     expect(document.body).toHaveTextContent(/^2a2c$/);
   });
 
+  test("respects falsy and truthy values for vIf directives", () => {
+    const Component = withVue(() => (
+      <>
+        <div vIf={0}>1</div>
+        <div vIf={1}>
+          <div vIf={"true"}>2a</div>
+          <div vIf={""}>2b</div>
+          <div vIf={{}}>2c</div>
+        </div>
+        <div vIf={null}>
+          <div vIf={true}>3a</div>
+        </div>
+      </>
+    ));
+    render(<Component />);
+
+    expect(document.body).toHaveTextContent(/^2a2c$/);
+  });
+
   test("respects vElseIf directive", () => {
     const Component = withVue(() => (
       <>
@@ -73,5 +92,37 @@ describe("withVue rules", () => {
     render(<Component />);
 
     expect(document.body).toHaveTextContent(/^34$/);
+  });
+
+  test("respects vShow directive", () => {
+    const Component = withVue(() => (
+      <>
+        <div vShow={true}>1</div>
+        <div vShow={false}>2</div>
+      </>
+    ));
+    render(<Component />);
+
+    expect(document.body).toHaveTextContent(/^12$/);
+    expect(screen.getByText("1")).toBeVisible();
+    expect(screen.getByText("2")).not.toBeVisible();
+  });
+
+  test("respects vShow directive for deep components", () => {
+    const Component = withVue(() => (
+      <>
+        <div>1</div>
+        <div vShow={false}>
+          <div vShow={true}>2a</div>
+          <div vShow={false}>2b</div>
+        </div>
+      </>
+    ));
+    render(<Component />);
+
+    expect(document.body).toHaveTextContent(/^12a2b$/);
+    expect(screen.getByText("1")).toBeVisible();
+    expect(screen.getByText("2a")).not.toBeVisible();
+    expect(screen.getByText("2b")).not.toBeVisible();
   });
 });
