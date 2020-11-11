@@ -64,12 +64,12 @@ const ifElse = arr => {
 };
 
 const withVue = Component => {
-  console.log(Component);
+  /* console.log(Component); */
   return props => {
     const result = Component(props);
-    console.log(result);
+    /* console.log(result);
     console.log("---------------");
-    console.log(parser(result));
+    console.log(parser(result)); */
     return parser(result);
   };
 };
