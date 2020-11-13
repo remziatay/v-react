@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 const parser = comp => {
@@ -9,17 +10,20 @@ const parser = comp => {
   if (!React.isValidElement(comp)) return comp;
 
   let { vIf, vElse, vElseIf, vShow, vText, children, ...props } = comp.props;
-  if (comp.key) props.key = comp.key;
-  if (comp.ref) props.ref = comp.ref;
 
   if ("key" in props) delete props.key;
   if ("ref" in props) delete props.ref;
+
+  if (comp.key) props.key = comp.key;
+  if (comp.ref) props.ref = comp.ref;
 
   if (vIf !== undefined && !vIf) return false;
   if (vShow !== undefined && !vShow)
     props.style = { ...props.style, display: "none" };
   if (children) children = parser(children);
   else if (vText !== undefined && vText !== false) children = vText.toString();
+  if (props.className !== undefined && typeof props.className !== "string")
+    props.className = clsx(props.className);
 
   return <comp.type {...props}>{children}</comp.type>;
 };

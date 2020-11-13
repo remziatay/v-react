@@ -145,4 +145,16 @@ describe("withVue rules", () => {
 
     expect(document.body).toHaveTextContent(/^Content$/);
   });
+
+  test("applies clsx to className", () => {
+    const Component = withVue(() => (
+      <div
+        data-testid="test"
+        className={["c1", false && "c2", { c3: true, c4: false }, ["c5", "c6"]]}
+      />
+    ));
+    render(<Component />);
+
+    expect(screen.getByTestId("test")).toHaveClass("c1 c3 c5 c6");
+  });
 });
