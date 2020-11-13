@@ -185,4 +185,26 @@ describe("withVue rules", () => {
     });
     expect(screen.getByTestId("div2")).toHaveStyle({ display: "inline" });
   });
+
+  test("passes key down", () => {
+    const users = [
+      { id: "key1", name: "a" },
+      { id: "key2", name: "b" },
+      { id: "key3", name: "c" },
+    ];
+    const Component = withVue(() =>
+      users.map(user => (
+        <div data-testid={user.id} key={user.id}>
+          {user.name}
+        </div>
+      ))
+    );
+    render(<Component />);
+
+    users.forEach(user => {
+      expect(Object.values(screen.getByTestId(user.id))[0].key).toMatch(
+        user.id
+      );
+    });
+  });
 });
