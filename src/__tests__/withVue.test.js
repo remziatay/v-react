@@ -125,4 +125,24 @@ describe("withVue rules", () => {
     expect(screen.getByText("2a")).not.toBeVisible();
     expect(screen.getByText("2b")).not.toBeVisible();
   });
+
+  test("respects vText directive", () => {
+    const Component = withVue(() => (
+      <>
+        <div vText="1" />
+        <div vText={2} />
+        <div vText={{ key: "value" }} />
+      </>
+    ));
+    render(<Component />);
+
+    expect(document.body).toHaveTextContent(/^12\[object Object\]$/);
+  });
+
+  test("doesn't respect vText directive if there is already children", () => {
+    const Component = withVue(() => <div vText="123">Content</div>);
+    render(<Component />);
+
+    expect(document.body).toHaveTextContent(/^Content$/);
+  });
 });

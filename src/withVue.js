@@ -8,16 +8,7 @@ const parser = comp => {
 
   if (!React.isValidElement(comp)) return comp;
 
-  let {
-    vIf,
-    vElse,
-    vElseIf,
-    vShow,
-    vText,
-    vOnce,
-    children,
-    ...props
-  } = comp.props;
+  let { vIf, vElse, vElseIf, vShow, vText, children, ...props } = comp.props;
   if (comp.key) props.key = comp.key;
   if (comp.ref) props.ref = comp.ref;
 
@@ -28,8 +19,7 @@ const parser = comp => {
   if (vShow !== undefined && !vShow)
     props.style = { ...props.style, display: "none" };
   if (children) children = parser(children);
-  else if (vText !== undefined && vText !== false && children !== undefined)
-    children = vText;
+  else if (vText !== undefined && vText !== false) children = vText.toString();
 
   return <comp.type {...props}>{children}</comp.type>;
 };
