@@ -9,7 +9,16 @@ const parser = comp => {
 
   if (!React.isValidElement(comp)) return comp;
 
-  let { vIf, vElse, vElseIf, vShow, vText, children, ...props } = comp.props;
+  let {
+    vIf,
+    vElse,
+    vElseIf,
+    vShow,
+    vText,
+    vHtml,
+    children,
+    ...props
+  } = comp.props;
 
   if ("key" in props) delete props.key;
   if ("ref" in props) delete props.ref;
@@ -24,6 +33,8 @@ const parser = comp => {
 
   if (children) children = parser(children);
   else if (vText !== undefined && vText !== false) children = vText.toString();
+  else if (vHtml !== undefined && vHtml !== false)
+    props.dangerouslySetInnerHTML = { __html: vHtml.toString() };
 
   if (props.className && typeof props.className !== "string")
     props.className = clsx(props.className);

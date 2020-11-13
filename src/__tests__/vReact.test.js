@@ -148,6 +148,22 @@ describe("withVue rules", () => {
     expect(document.body).toHaveTextContent(/^Content$/);
   });
 
+  test("respects vHtml directive", () => {
+    const Component = withVue(() => (
+      <div data-testid="div" vHtml="<p>Test</p>" />
+    ));
+    render(<Component />);
+
+    expect(screen.getByTestId("div")).toContainHTML("<p>Test</p>");
+  });
+
+  test("doesn't respect vHtml directive if there is already children", () => {
+    const Component = withVue(() => <div vHtml="<p>Test</p>">Content</div>);
+    render(<Component />);
+
+    expect(document.body).toHaveTextContent(/^Content$/);
+  });
+
   test("applies clsx to className", () => {
     const Component = withVue(() => (
       <div
@@ -359,6 +375,26 @@ describe("Vue rules", () => {
     render(
       <Vue>
         <div vText="123">Content</div>
+      </Vue>
+    );
+
+    expect(document.body).toHaveTextContent(/^Content$/);
+  });
+
+  test("respects vHtml directive", () => {
+    render(
+      <Vue>
+        <div data-testid="div" vHtml="<p>Test</p>" />
+      </Vue>
+    );
+
+    expect(screen.getByTestId("div")).toContainHTML("<p>Test</p>");
+  });
+
+  test("doesn't respect vHtml directive if there is already children", () => {
+    render(
+      <Vue>
+        <div vHtml="<p>Test</p>">Content</div>
       </Vue>
     );
 
