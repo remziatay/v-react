@@ -18,12 +18,16 @@ const parser = comp => {
   if (comp.ref) props.ref = comp.ref;
 
   if (vIf !== undefined && !vIf) return false;
+
   if (vShow !== undefined && !vShow)
     props.style = { ...props.style, display: "none" };
+
   if (children) children = parser(children);
   else if (vText !== undefined && vText !== false) children = vText.toString();
+
   if (props.className && typeof props.className !== "string")
     props.className = clsx(props.className);
+
   if (Array.isArray(props.style))
     props.style = Object.assign({}, ...props.style);
 
@@ -52,23 +56,15 @@ const ifElse = arr => {
 
     lastIf = undefined;
     if (child.props.vElse !== undefined) return true;
+
     if (child.props.vElseIf !== undefined) {
       lastIf = child.props.vElseIf;
       return child.props.vElseIf;
     }
+
     return true;
   });
 };
 
-const withVue = Component => {
-  /* console.log(Component); */
-  return props => {
-    const result = Component(props);
-    /* console.log(result);
-    console.log("---------------");
-    console.log(parser(result)); */
-    return parser(result);
-  };
-};
-
-export default withVue;
+export const withVue = Component => props => parser(Component(props));
+export const Vue = ({ children }) => parser(children);
