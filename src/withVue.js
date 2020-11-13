@@ -22,8 +22,10 @@ const parser = comp => {
     props.style = { ...props.style, display: "none" };
   if (children) children = parser(children);
   else if (vText !== undefined && vText !== false) children = vText.toString();
-  if (props.className !== undefined && typeof props.className !== "string")
+  if (props.className && typeof props.className !== "string")
     props.className = clsx(props.className);
+  if (Array.isArray(props.style))
+    props.style = Object.assign({}, ...props.style);
 
   return <comp.type {...props}>{children}</comp.type>;
 };

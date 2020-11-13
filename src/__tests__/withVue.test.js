@@ -149,12 +149,40 @@ describe("withVue rules", () => {
   test("applies clsx to className", () => {
     const Component = withVue(() => (
       <div
-        data-testid="test"
+        data-testid="div1"
         className={["c1", false && "c2", { c3: true, c4: false }, ["c5", "c6"]]}
-      />
+      >
+        <div data-testid="div2" className="c7" />
+      </div>
     ));
     render(<Component />);
 
-    expect(screen.getByTestId("test")).toHaveClass("c1 c3 c5 c6");
+    expect(screen.getByTestId("div1")).toHaveClass("c1 c3 c5 c6");
+    expect(screen.getByTestId("div2")).toHaveClass("c7");
+  });
+
+  test("overrides styles given as array", () => {
+    const Component = withVue(() => (
+      <div
+        data-testid="div1"
+        style={[
+          { color: "pink", display: "flex" },
+          { width: "50%", border: "2px dotted red" },
+          { border: "1px solid black" },
+          { color: "white" },
+        ]}
+      >
+        <div data-testid="div2" style={{ display: "inline" }} />
+      </div>
+    ));
+    render(<Component />);
+
+    expect(screen.getByTestId("div1")).toHaveStyle({
+      color: "white",
+      display: "flex",
+      width: "50%",
+      border: "1px solid black",
+    });
+    expect(screen.getByTestId("div2")).toHaveStyle({ display: "inline" });
   });
 });
