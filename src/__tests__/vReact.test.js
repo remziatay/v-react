@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { useRef } from "react";
-import { withVue, Vue } from "../withVue";
+import { withVue, Vue } from "../vReact";
 
 describe("withVue rules", () => {
   test("renders normally when no directives", () => {
