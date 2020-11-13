@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { useRef } from "react";
 import withVue from "../withVue";
 
 describe("withVue rules", () => {
@@ -206,5 +207,16 @@ describe("withVue rules", () => {
         user.id
       );
     });
+  });
+
+  test("passes ref down", () => {
+    const Component = withVue(() => {
+      const divRef = useRef(null);
+      return <div data-testid="div" ref={divRef} />;
+    });
+    render(<Component />);
+
+    const div = screen.getByTestId("div");
+    expect(Object.values(div)[0].ref.current).toBe(div);
   });
 });
