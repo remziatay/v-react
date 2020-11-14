@@ -96,6 +96,21 @@ describe("withVue rules", () => {
     expect(document.body).toHaveTextContent(/^34$/);
   });
 
+  test("doesn't respect vElse and vElseIf if they don't come right after vIf", () => {
+    const Component = withVue(() => (
+      <>
+        <div vIf={false}>1</div>
+        <div>2</div>
+        <div vElseIf={true}>3</div>
+        <div vElseIf={false}>4</div>
+        <div vElse>5</div>
+      </>
+    ));
+    render(<Component />);
+
+    expect(document.body).toHaveTextContent(/^2345$/);
+  });
+
   test("respects vShow directive", () => {
     const Component = withVue(() => (
       <>
@@ -327,6 +342,20 @@ describe("Vue rules", () => {
     );
 
     expect(document.body).toHaveTextContent(/^34$/);
+  });
+
+  test("doesn't respect vElse and vElseIf if they don't come right after vIf", () => {
+    render(
+      <Vue>
+        <div vIf={false}>1</div>
+        <div>2</div>
+        <div vElseIf={true}>3</div>
+        <div vElseIf={false}>4</div>
+        <div vElse>5</div>
+      </Vue>
+    );
+
+    expect(document.body).toHaveTextContent(/^2345$/);
   });
 
   test("respects vShow directive", () => {

@@ -58,6 +58,8 @@ const ifElse = arr => {
       return child.props.vIf;
     }
 
+    if (lastIf === undefined) return true;
+
     if (lastIf) {
       if (child.props.vElse !== undefined) return false;
       if (child.props.vElseIf !== undefined) return false;
