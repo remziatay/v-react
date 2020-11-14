@@ -152,6 +152,6 @@ Check for more examples in [clsx](https://github.com/lukeed/clsx) repository!
       { color: "pink", display: "flex" },
       { color: "white" },
     ]} /> // style will be "{color: "white", display: "flex"}"
-    <div data-testid="div2" style={{ display: "inline" }} /> // it will work just as normal
+    <div style={{ display: "inline" }} /> // it will work just as normal
 </>
 ```
