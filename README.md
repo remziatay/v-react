@@ -1,70 +1,157 @@
-# Getting Started with Create React App
+# v-react
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a small library that lets you use [Vue](https://github.com/vuejs/vue)'s directives in React. Available directives are:
 
-## Available Scripts
+- vIf
+- vElse
+- vElseIf
+- vShow
+- vText
+- vHtml (careful!)
+- vModel (coming soon)
 
-In the project directory, you can run:
+##### Why not the others?
 
-### `npm start`
+Because either it doesn't make any sense to implement it for React (v-bind, v-on) or it would make things more complicated (v-for) or some other reason that it's not suited with React.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Usage
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+To directives to be processed we should either use withVue or Vue.
 
-### `npm test`
+#### withVue
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```js
+import { withVue } from "v-react";
+const MyComponent = props => <div vIf={false}>1</div>;
+export default withVue(MyComponent);
+```
 
-### `npm run build`
+or
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```js
+import { withVue } from "v-react";
+const MyComponent = withVue(props => <div vIf={false}>1</div>);
+export default MyComponent;
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### Vue
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```js
+import { Vue } from "v-react";
+const MyComponent = props => (
+  <Vue>
+    <div vIf={false}>1</div>
+  </Vue>
+);
+export default MyComponent;
+```
 
-### `npm run eject`
+#### vIf, vElse, vElseIf
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+These will render components conditionally, just like vue does.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```js
+<>
+  <div vIf={false}>1</div>
+  <div vIf={true}>
+    <div vIf={true}>2a</div>
+    <div vIf={false}>2b</div>
+    <div vIf={true}>2c</div>
+  </div>
+  <div vIf={false}>
+    <div vIf={true}>3a</div>
+  </div>
+</> // will render only 2a and 2c
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```js
+<>
+  <div vIf={false}>1</div>
+  <div vElseIf={false}>2</div>
+  <div vElse>3</div>
+  <div vIf={true}>4</div>
+  <div vElse>5</div>
+</> // will render only 3 and 4
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Conditional directives must be consecutive or they will be ignored
 
-## Learn More
+```js
+<>
+  <div vIf={false}>1</div>
+  <div>2</div>
+  <div vElseIf={true}>3</div>
+  <div vElseIf={false}>4</div>
+  <div vElse>5</div>
+</> // will render 2, 3, 4 and 5
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### vShow
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Component won't be displayed if vShow is falsy. Truthy vShow values don't mean anything.
 
-### Code Splitting
+```js
+<>
+  <div vShow={true}>1</div>
+  <div vShow={false}>2</div>
+</> // will render both but 2 will not be displayed
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+vShow cannot be overriden inside a parent
 
-### Analyzing the Bundle Size
+```js
+<div vShow={false}>
+  <div vShow={true}>2a</div>
+  <div vShow={false}>2b</div>
+</div> // this obviously won't make 2a visible
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### vText
 
-### Making a Progressive Web App
+This will give the value to the component as children. If component already has children, vText is ignored. vText values are converted to string.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```js
+<>
+  <div vText="1" /> // will render <div>1</div>
+  <div vText={2} /> // will render <div>2</div>
+  <div vText={{ key: "value" }} /> // will render <div>[object Object]</div>
+  <div vText="anything">4</div> // will render <div>4</div>
+</>
+```
 
-### Advanced Configuration
+#### vHtml
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+This basically implements dangerouslySetInnerHTML of React. Be careful using it! vHtml also ignored if component already has children.
 
-### Deployment
+```js
+<>
+  <div vHtml="<p>1</p>" /> {/* will render <div><p>1</p></div> */}
+  <div vHtml="<p>Test</p>">2</div> {/* will render <div>2</div> */}
+</>
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Other Features
 
-### `npm run build` fails to minify
+Even tho this is about directives, I still wanted to include one of vue's simpler features. Classname props will be rendered with [clsx](https://github.com/lukeed/clsx) if it's given as an array. Also style props will merge styles if it's given as an array.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```js
+<>
+  <div
+    className={["c1", false && "c2", { c3: true, c4: false }, ["c5", "c6"]]} // className will be "c1 c3 c5 c6"
+  />
+  <div data-testid="div2" className="c7" /> // it will work just as normal
+</>
+```
+
+Check for more examples in [clsx](https://github.com/lukeed/clsx) repository!
+
+```js
+<>
+    <div
+    style={[
+      { color: "pink", display: "flex" },
+      { color: "white" },
+    ]} /> // style will be "{color: "white", display: "flex"}"
+    <div data-testid="div2" style={{ display: "inline" }} /> // it will work just as normal
+</>
+```
