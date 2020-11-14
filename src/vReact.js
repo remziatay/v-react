@@ -17,23 +17,23 @@ const parser = comp => {
     vText,
     vHtml,
     children,
+    key,
+    ref,
     ...props
   } = comp.props;
 
-  if ("key" in props) delete props.key;
-  if ("ref" in props) delete props.ref;
+  if (comp.key !== null) props.key = comp.key;
+  if (comp.ref !== null) props.ref = comp.ref;
 
-  if (comp.key) props.key = comp.key;
-  if (comp.ref) props.ref = comp.ref;
+  if ("vIf" in comp.props && !vIf) return false;
 
-  if (vIf !== undefined && !vIf) return false;
-
-  if (vShow !== undefined && !vShow)
+  if ("vShow" in comp.props && !vShow)
     props.style = { ...props.style, display: "none" };
 
   if (children) children = parser(children);
-  else if (vText !== undefined && vText !== false) children = vText.toString();
-  else if (vHtml !== undefined && vHtml !== false)
+  else if ("vText" in comp.props && vText !== false)
+    children = vText.toString();
+  else if ("vHtml" in comp.props && vHtml !== false)
     props.dangerouslySetInnerHTML = { __html: vHtml.toString() };
 
   if (props.className && typeof props.className !== "string")
