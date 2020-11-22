@@ -1,6 +1,6 @@
 # v-react
 
-This is a small library that lets you use [Vue](https://github.com/vuejs/vue)'s directives in React. Available directives are:
+This is a small utility that lets you use [Vue](https://github.com/vuejs/vue)'s directives in React. Available directives are:
 
 - vIf
 - vElse
